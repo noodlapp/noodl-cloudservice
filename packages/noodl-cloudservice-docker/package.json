@@ -1,0 +1,20 @@
+{
+  "name": "@noodl/cloudservice-docker",
+  "version": "1.0.0",
+  "description": "Low-code for when experience matter",
+  "author": "Noodl <info@noodl.net>",
+  "homepage": "https://noodl.net",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "test": "./node_modules/.bin/jasmine"
+  },
+  "dependencies": {
+    "@noodl/cloudservice": "file:../noodl-cloudservice",
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jasmine": "^4.0.2"
+  }
+}

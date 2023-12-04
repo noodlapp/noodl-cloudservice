@@ -1,0 +1,521 @@
+[
+  {
+    "className": "_Role",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "name": {
+        "type": "String"
+      },
+      "users": {
+        "type": "Relation",
+        "targetClass": "_User"
+      },
+      "roles": {
+        "type": "Relation",
+        "targetClass": "_Role"
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      },
+      "name_1": {
+        "name": 1
+      }
+    }
+  },
+  {
+    "className": "_User",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "username": {
+        "type": "String"
+      },
+      "password": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      },
+      "emailVerified": {
+        "type": "Boolean"
+      },
+      "authData": {
+        "type": "Object"
+      },
+      "code": {
+        "type": "Number"
+      },
+      "error": {
+        "type": "String"
+      },
+      "sessionToken": {
+        "type": "String"
+      },
+      "logInDisabled": {
+        "type": "Boolean"
+      }
+    },
+    "classLevelPermissions": {
+      "find": {},
+      "count": {},
+      "get": {},
+      "create": {},
+      "update": {},
+      "delete": {},
+      "addField": {},
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      },
+      "username_1": {
+        "username": 1
+      },
+      "case_insensitive_email": {
+        "email": 1
+      },
+      "case_insensitive_username": {
+        "username": 1
+      },
+      "email_1": {
+        "email": 1
+      }
+    }
+  },
+  {
+    "className": "Ndl_CF",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "code": {
+        "type": "String",
+        "required": false
+      },
+      "version": {
+        "type": "String"
+      },
+      "runtime": {
+        "type": "String"
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      }
+    }
+  },
+  {
+    "className": "Test",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "AnObject": {
+        "type": "Object",
+        "required": false
+      },
+      "Text": {
+        "type": "String",
+        "required": false
+      },
+      "ANumber": {
+        "type": "Number",
+        "required": false
+      },
+      "ADate": {
+        "type": "Date",
+        "required": false
+      },
+      "AString": {
+        "type": "String",
+        "required": false
+      },
+      "ABoolean": {
+        "type": "Boolean",
+        "required": false
+      },
+      "AnArray": {
+        "type": "Array",
+        "required": false
+      },
+      "ABool": {
+        "type": "Boolean"
+      },
+      "ARelation": {
+        "type": "Relation",
+        "targetClass": "Test"
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      }
+    }
+  },
+  {
+    "className": "TestQuery",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "Name": {
+        "type": "String",
+        "required": false
+      },
+      "Age": {
+        "type": "Number",
+        "required": false
+      },
+      "Parent": {
+        "type": "Pointer",
+        "targetClass": "TestQuery",
+        "required": false
+      },
+      "Children": {
+        "type": "Relation",
+        "targetClass": "TestQuery"
+      },
+      "Sex": {
+        "type": "String",
+        "required": false
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      }
+    }
+  },
+  {
+    "className": "Post",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "Title": {
+        "type": "String",
+        "required": false
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      }
+    }
+  },
+  {
+    "className": "Group",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "posts": {
+        "type": "Relation",
+        "targetClass": "Post"
+      },
+      "Name": {
+        "type": "String"
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      }
+    }
+  },
+  {
+    "className": "_Session",
+    "fields": {
+      "objectId": {
+        "type": "String"
+      },
+      "createdAt": {
+        "type": "Date"
+      },
+      "updatedAt": {
+        "type": "Date"
+      },
+      "ACL": {
+        "type": "ACL"
+      },
+      "restricted": {
+        "type": "Boolean"
+      },
+      "user": {
+        "type": "Pointer",
+        "targetClass": "_User"
+      },
+      "installationId": {
+        "type": "String"
+      },
+      "sessionToken": {
+        "type": "String"
+      },
+      "expiresAt": {
+        "type": "Date"
+      },
+      "createdWith": {
+        "type": "Object"
+      }
+    },
+    "classLevelPermissions": {
+      "find": {
+        "*": true
+      },
+      "count": {
+        "*": true
+      },
+      "get": {
+        "*": true
+      },
+      "create": {
+        "*": true
+      },
+      "update": {
+        "*": true
+      },
+      "delete": {
+        "*": true
+      },
+      "addField": {
+        "*": true
+      },
+      "protectedFields": {
+        "*": []
+      }
+    },
+    "indexes": {
+      "_id_": {
+        "_id": 1
+      }
+    }
+  }
+]
