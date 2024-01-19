@@ -6,15 +6,11 @@
   "homepage": "https://noodl.net",
   "license": "MIT",
   "scripts": {
-    "start": "node ./src/index.js",
-    "test": "./node_modules/.bin/jasmine"
+    "start": "node ./src/index.js"
   },
   "dependencies": {
     "@noodl/cloudservice": "file:../noodl-cloudservice",
     "cors": "^2.8.5",
     "express": "^4.17.1"
-  },
-  "devDependencies": {
-    "jasmine": "^4.0.2"
   }
 }

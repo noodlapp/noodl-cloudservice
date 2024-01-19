@@ -6,17 +6,11 @@
   "homepage": "https://noodl.net",
   "license": "MIT",
   "main": "./src/index.js",
-  "scripts": {
-    "test": "./node_modules/.bin/jasmine"
-  },
   "dependencies": {
     "isolated-vm": "^4.4.2",
     "node-fetch": "2.6.7",
     "parse-server": "^4.10.4",
     "parse-server-gcs-adapter": "git+https://github.com/noodlapp/noodl-parse-server-gcs-adapter.git",
     "winston-mongodb": "^5.1.0"
-  },
-  "devDependencies": {
-    "jasmine": "^4.0.2"
   }
 }
