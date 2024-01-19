@@ -1,6 +1,5 @@
-const fetch = require("node-fetch");
-const ivm = require("isolated-vm");
-const fs = require("fs");
+import fetch from "node-fetch";
+import ivm from "isolated-vm";
 
 // Create a snapshot of a given runtime if needed
 // of serve from the cache
@@ -99,7 +98,7 @@ async function createContext(env) {
   let ongoingAPICalls = 0;
   const maxOngoingAPICalls = 100;
 
-  function _internalServerError(message) {
+  function _internalServerError(message?) {
     Object.keys(responseHandlers).forEach((k) => {
       if (typeof responseHandlers[k] === "function") {
         responseHandlers[k]({
@@ -132,7 +131,7 @@ async function createContext(env) {
     }
   }
 
-  function _api_respond(token, res) {
+  function _api_respond(token, res?) {
     ongoingAPICalls--;
     if (ongoingAPICalls < 0) ongoingAPICalls = 0;
 
@@ -249,6 +248,10 @@ async function createContext(env) {
     throw e;
   }
 
+  let _context: any = {
+    markedToBeDiscarded: false
+  }
+
   function _checkMemUsage() {
     if (isolate.isDisposed) return; // Ignore already disposed isolate
 
@@ -276,10 +279,10 @@ async function createContext(env) {
   }
 
   async function handleRequest(options) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
+      let hasResponded = false;
+      
       try {
-        let hasResponded = false;
-
         _context.ttl = Date.now() + 10 * 60 * 1000; // Keep context alive
 
         const token = Math.random().toString(26).slice(2);
@@ -336,7 +339,7 @@ async function createContext(env) {
     });
   }
 
-  const _context = {
+  _context = {
     context,
     isolate,
     responseHandlers,
@@ -349,7 +352,7 @@ async function createContext(env) {
 }
 
 const contextCache = {};
-async function getCachedContext(env) {
+export async function getCachedContext(env) {
   const uri = env.appId + "/" + env.version;
 
   // Check if the isolate have been disposed
@@ -374,7 +377,7 @@ async function getCachedContext(env) {
 }
 
 let hasScheduledContextCachePurge = false;
-function scheduleContextCachePurge() {
+export function scheduleContextCachePurge() {
   if (hasScheduledContextCachePurge) return;
   hasScheduledContextCachePurge = true;
   setTimeout(() => {
@@ -401,8 +404,3 @@ function scheduleContextCachePurge() {
     });
   }, 5 * 1000);
 }
-
-module.exports = {
-  scheduleContextCachePurge,
-  getCachedContext,
-};

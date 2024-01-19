@@ -1,7 +1,7 @@
-const { createNoodlParseServer } = require("./parse");
-const { executeFunction } = require("./function");
-const { deployFunctions, getLatestVersionCached } = require("./function-deploy");
-const { Logger } = require("./logger");
+import { createNoodlParseServer } from "./parse";
+import { executeFunction } from "./function";
+import { deployFunctions, getLatestVersion } from "./function-deploy";
+import { Logger } from "./logger";
 
 function createMiddleware(noodlServer) {
   return async function middleware(req, res, next) {
@@ -17,7 +17,7 @@ function createMiddleware(noodlServer) {
     
         let version = req.headers['x-noodl-cloud-version']
         if (version === undefined) {
-          version = await getLatestVersionCached(noodlServer.options)
+          version = await getLatestVersion(noodlServer.options)
         }
 
         // Execute the request

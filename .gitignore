@@ -118,3 +118,5 @@ out
 
 .DS_Store
 .env*
+
+packages/noodl-cloudservice/dist

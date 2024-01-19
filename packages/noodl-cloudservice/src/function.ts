@@ -1,8 +1,10 @@
-const CFContext = require('./cfcontext')
+import * as CFContext from './cfcontext';
 
 // The logger that is needed by the cloud functions
 // it passes the logs to the parse server logger
-class FunctionLogger {
+export class FunctionLogger {
+  noodlParseServer: any;
+
   constructor(noodlParseServer) {
     this.noodlParseServer = noodlParseServer;
   }
@@ -14,7 +16,7 @@ class FunctionLogger {
   }
 }
 
-async function executeFunction({
+export async function executeFunction({
   port,
   appId,
   masterKey,
@@ -47,8 +49,3 @@ async function executeFunction({
 
   return response
 }
-
-module.exports = {
-  FunctionLogger,
-  executeFunction
-};

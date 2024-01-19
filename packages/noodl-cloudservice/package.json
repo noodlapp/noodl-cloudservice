@@ -5,12 +5,32 @@
   "author": "Noodl <info@noodl.net>",
   "homepage": "https://noodl.net",
   "license": "MIT",
-  "main": "./src/index.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/main.umd.cjs",
+  "module": "./dist/main.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.umd.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsc && vite build"
+  },
   "dependencies": {
     "isolated-vm": "^4.4.2",
     "node-fetch": "2.6.7",
     "parse-server": "^4.10.4",
     "parse-server-gcs-adapter": "git+https://github.com/noodlapp/noodl-parse-server-gcs-adapter.git",
     "winston-mongodb": "^5.1.0"
+  },
+  "devDependencies": {
+    "rollup-plugin-node-externals": "^6.1.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.11",
+    "vite-plugin-static-copy": "^1.0.0"
   }
 }

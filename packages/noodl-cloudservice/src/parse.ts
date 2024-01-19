@@ -1,8 +1,6 @@
-const path = require('path');
-const ParseServer = require('parse-server').default;
-const {
-  LoggerAdapter
-} = require('./mongodb');
+import path from 'path';
+import ParseServer from 'parse-server';
+import { LoggerAdapter } from './mongodb';
 
 /**
  * 
@@ -18,7 +16,7 @@ const {
  *    logger: LoggerAdapter;
  *  }}
  */
-function createNoodlParseServer({
+export function createNoodlParseServer({
   port = 3000,
   databaseURI,
   masterKey,
@@ -41,7 +39,7 @@ function createNoodlParseServer({
       throw Error("You must provide S3_SECRET_KEY and S3_ACCESS_KEY environment variables in addition to S3_BUCKET for S3 file storage.")
     }
 
-    const S3Adapter = require('parse-server').S3Adapter;
+    const S3Adapter = ParseServer.S3Adapter;
     filesAdapter = new S3Adapter(
       process.env.S3_ACCESS_KEY,
       process.env.S3_SECRET_KEY,
@@ -71,9 +69,9 @@ function createNoodlParseServer({
     );
   }
 
-  const server = new ParseServer({
+  const server = new ParseServer.default({
     databaseURI,
-    cloud: path.resolve(__dirname, './cloud.js'),
+    cloud: path.resolve(__dirname, './static/cloud.cjs'),
     push: false,
     appId,
     masterKey,
@@ -108,8 +106,4 @@ function createNoodlParseServer({
     server,
     logger,
   };
-}
-
-module.exports = {
-  createNoodlParseServer
 }

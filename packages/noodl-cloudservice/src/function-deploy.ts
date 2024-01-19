@@ -1,7 +1,7 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 // Get the latest version of cloud functions deploy, if not provided in header
-async function getLatestVersion({ appId, masterKey }) {
+async function rawGetLatestVersion({ appId, masterKey, port }) {
   const res = await fetch('http://localhost:' + port + '/classes/Ndl_CF?limit=1&order=-createdAt&keys=version', {
     headers: {
       'X-Parse-Application-Id': appId,
@@ -18,13 +18,13 @@ async function getLatestVersion({ appId, masterKey }) {
 }
 
 let _latestVersionCache;
-async function getLatestVersionCached(options) {
+export async function getLatestVersion(options) {
   if (_latestVersionCache && (_latestVersionCache.ttl === undefined || _latestVersionCache.ttl > Date.now())) {
     return _latestVersionCache;
   }
 
   try {
-    const latestVersion = await getLatestVersion(options);
+    const latestVersion = await rawGetLatestVersion(options);
     _latestVersionCache = latestVersion;
     _latestVersionCache.ttl = Date.now() + 15 * 1000; // Cache for 15s
   } catch {
@@ -56,7 +56,7 @@ function chunkDeploy(str, size) {
   return chunks
 }
 
-async function deployFunctions({
+export async function deployFunctions({
   port,
   appId,
   masterKey,
@@ -96,8 +96,3 @@ async function deployFunctions({
     version
   }
 }
-
-module.exports = {
-  deployFunctions,
-  getLatestVersion: getLatestVersionCached
-};

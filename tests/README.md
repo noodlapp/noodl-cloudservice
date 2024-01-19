@@ -27,7 +27,7 @@ ANumber: 15
 ADate: 2022-11-07T10:23:52.301Z
 AString: Test
 ABoolean: true
-AnObjetc: {"hej":"ho"}
+AnObject: {"hej":"ho"}
 AnArray: ["a", "b"]
 Text: fetch-test
 ```
