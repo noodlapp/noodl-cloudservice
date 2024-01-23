@@ -1,7 +1,7 @@
-const { createNoodlParseServer } = require("./parse");
-const { executeFunction } = require("./function");
-const { deployFunctions, getLatestVersionCached } = require("./function-deploy");
-const { Logger } = require("./logger");
+import { NoodlParseServerOptions, createNoodlParseServer } from "./parse";
+import { executeFunction } from "./function";
+import { CFVersion, deployFunctions, getLatestVersion } from "./function-deploy";
+import { Logger } from "./logger";
 
 function createMiddleware(noodlServer) {
   return async function middleware(req, res, next) {
@@ -15,10 +15,10 @@ function createMiddleware(noodlServer) {
     
         console.log('Running cloud function ' + functionId);
     
-        let version = req.headers['x-noodl-cloud-version']
-        if (version === undefined) {
-          version = await getLatestVersionCached(noodlServer.options)
-        }
+        let requestVersion = req.headers['x-noodl-cloud-version'];
+        let version: CFVersion = requestVersion
+          ? { functionVersion: requestVersion }
+          : await getLatestVersion(noodlServer.options)
 
         // Execute the request
         const cfResponse = await executeFunction({
@@ -98,24 +98,13 @@ function createMiddleware(noodlServer) {
   }
 }
 
-/**
- * 
- * @param {{
- *    port: number;
- *    databaseURI: string;
- *    masterKey: string;
- *    appId: string;
- *    functionOptions: { timeOut: number; memoryLimit: number; };
- *    parseOptions?: unknown;
- *  }} options 
- */
-function createNoodlServer(options) {
-  const noodlServer = createNoodlParseServer(options)
+export function createNoodlServer(options: NoodlParseServerOptions) {
+  const noodlServer = createNoodlParseServer(options);
 
   const cfMiddleware = createMiddleware(noodlServer);
   
   // Combine the Noodl Cloud Function middleware with the Parse middleware into one middleware.
-  const middleware = (req, res, next) => {
+  const middleware = (req: Request, res: Response, next: () => void) => {
     cfMiddleware(req, res, () => {
       noodlServer.server.app(req, res, next);
     });
@@ -124,9 +113,5 @@ function createNoodlServer(options) {
   return {
     noodlServer,
     middleware
-  }
+  };
 }
-
-module.exports = {
-  createNoodlServer
-};

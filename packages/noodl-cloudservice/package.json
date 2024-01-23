@@ -5,12 +5,27 @@
   "author": "Noodl <info@noodl.net>",
   "homepage": "https://noodl.net",
   "license": "MIT",
-  "main": "./src/index.js",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "commonjs",
+  "scripts": {
+    "build:clean": "ts-node ./scripts/clean.ts",
+    "build:ts": "tsc",
+    "build:static": "ts-node ./scripts/copyStaticAssets.ts",
+    "build": "npm run build:clean && npm run build:ts && npm run build:static"
+  },
   "dependencies": {
     "isolated-vm": "^4.4.2",
     "node-fetch": "2.6.7",
     "parse-server": "^4.10.4",
     "parse-server-gcs-adapter": "git+https://github.com/noodlapp/noodl-parse-server-gcs-adapter.git",
     "winston-mongodb": "^5.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.2"
   }
 }

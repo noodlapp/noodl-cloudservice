@@ -1,31 +1,39 @@
-const path = require('path');
-const ParseServer = require('parse-server').default;
-const {
-  LoggerAdapter
-} = require('./mongodb');
+import path from 'path';
+import ParseServer, { S3Adapter } from 'parse-server';
+import { LoggerAdapter } from './mongodb';
 
-/**
- * 
- * @param {{
- *    port: number;
- *    databaseURI: string;
- *    masterKey: string;
- *    appId: string;
- *    parseOptions?: unknown;
- *  }} param0 
- * @returns {{
- *    server: ParseServer;
- *    logger: LoggerAdapter;
- *  }}
- */
-function createNoodlParseServer({
+export type NoodlParseServerOptions = {
+  port: number;
+  databaseURI: string;
+  masterKey: string;
+  appId: string;
+  parseOptions?: Record<string, unknown>;
+
+  functionOptions: {
+    timeOut: number;
+    memoryLimit: number;
+  }
+}
+
+export type NoodlParseServerResult = {
+  functionOptions: NoodlParseServerOptions['functionOptions'];
+  options: {
+    port: number;
+    appId: string;
+    masterKey: string;
+  };
+  server: ParseServer;
+  logger: LoggerAdapter;
+}
+
+export function createNoodlParseServer({
   port = 3000,
   databaseURI,
   masterKey,
   appId,
   functionOptions,
   parseOptions = {},
-}) {
+}: NoodlParseServerOptions): NoodlParseServerResult {
   const serverURL = `http://localhost:${port}/`;
 
   const logger = new LoggerAdapter({
@@ -41,7 +49,6 @@ function createNoodlParseServer({
       throw Error("You must provide S3_SECRET_KEY and S3_ACCESS_KEY environment variables in addition to S3_BUCKET for S3 file storage.")
     }
 
-    const S3Adapter = require('parse-server').S3Adapter;
     filesAdapter = new S3Adapter(
       process.env.S3_ACCESS_KEY,
       process.env.S3_SECRET_KEY,
@@ -73,7 +80,7 @@ function createNoodlParseServer({
 
   const server = new ParseServer({
     databaseURI,
-    cloud: path.resolve(__dirname, './cloud.js'),
+    cloud: path.resolve(__dirname, './static/cloud.cjs'),
     push: false,
     appId,
     masterKey,
@@ -108,8 +115,4 @@ function createNoodlParseServer({
     server,
     logger,
   };
-}
-
-module.exports = {
-  createNoodlParseServer
 }

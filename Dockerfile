@@ -5,11 +5,12 @@ FROM nikolaik/python-nodejs:python3.8-nodejs16
 WORKDIR /usr/src/noodl-cloudservice
 COPY ./packages/noodl-cloudservice .
 RUN npm install
+RUN npm run build
 
 
 WORKDIR /usr/src/app
 COPY packages/noodl-cloudservice-docker .
-RUN npm install
+RUN npm install --install-links
 
 
 EXPOSE 3000

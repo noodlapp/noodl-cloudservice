@@ -1,5 +1,7 @@
-const Winston = require('winston')
-require('winston-mongodb');
+import Winston from 'winston';
+import { MongoDB } from 'winston-mongodb';
+
+const MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
 
 // This stuff is needed to get the mongo-db transport working
 // https://github.com/winstonjs/winston/issues/1130
@@ -50,29 +52,33 @@ Transport.prototype.normalizeQuery = function (options) { //
 
   return options;
 };
-Transport.prototype.formatResults = function (results, options) {
+Transport.prototype.formatResults = function (results, _options) {
   return results;
 };
 
 // Create a logger that will push to mongodb
-class WinstonLoggerAdapter {
+export class LoggerAdapter {
+  logger: Winston.Logger;
+
   constructor(options) {
-    const info = new Winston.transports.MongoDB({
+    const info = new MongoDB({
       db: options.databaseURI,
       level: 'info',
       collection: '_ndl_logs_info',
       capped: true,
       cappedSize: 2000000, // 2mb size
     })
+    // @ts-expect-error
     info.name = 'logs-info'
 
-    const error = new Winston.transports.MongoDB({
+    const error = new MongoDB({
       db: options.databaseURI,
       level: 'error',
       collection: '_ndl_logs_error',
       capped: true,
       cappedSize: 2000000, // 2mb size
     })
+    // @ts-expect-error
     error.name = 'logs-error'
 
     this.logger = Winston.createLogger({
@@ -96,7 +102,7 @@ class WinstonLoggerAdapter {
   }
 
   // custom query as winston is currently limited
-  query(options, callback = () => {}) {
+  query(options, callback = (_result) => {}) {
     if (!options) {
       options = {};
     }
@@ -108,12 +114,13 @@ class WinstonLoggerAdapter {
     const order = options.order || 'desc';
     const level = options.level || 'info';
 
-    const queryOptions = {
+    const queryOptions: Winston.QueryOptions = {
       from,
       until,
       limit,
       order,
-    };
+      fields: {}
+    }
 
     return new Promise((resolve, reject) => {
       this.logger.query(queryOptions, (err, res) => {
@@ -131,8 +138,4 @@ class WinstonLoggerAdapter {
       });
     });
   }
-}
-
-module.exports = {
-  LoggerAdapter: WinstonLoggerAdapter
 }
