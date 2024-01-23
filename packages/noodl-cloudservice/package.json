@@ -5,20 +5,17 @@
   "author": "Noodl <info@noodl.net>",
   "homepage": "https://noodl.net",
   "license": "MIT",
-  "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/main.umd.cjs",
-  "module": "./dist/main.mjs",
-  "exports": {
-    ".": {
-      "import": "./dist/main.mjs",
-      "require": "./dist/main.umd.cjs"
-    }
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "commonjs",
   "scripts": {
-    "build": "tsc && vite build"
+    "build:clean": "ts-node ./scripts/clean.ts",
+    "build:ts": "tsc",
+    "build:static": "ts-node ./scripts/copyStaticAssets.ts",
+    "build": "npm run build:clean && npm run build:ts && npm run build:static"
   },
   "dependencies": {
     "isolated-vm": "^4.4.2",
@@ -28,9 +25,7 @@
     "winston-mongodb": "^5.1.0"
   },
   "devDependencies": {
-    "rollup-plugin-node-externals": "^6.1.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.11",
-    "vite-plugin-static-copy": "^1.0.0"
+    "ts-node": "^10.9.2"
   }
 }

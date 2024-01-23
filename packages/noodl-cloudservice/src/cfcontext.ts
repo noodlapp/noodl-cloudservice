@@ -1,9 +1,13 @@
-import { ContextGlobalState, CreateContextEnv, createContext } from "./context/createContext";
+import {
+  ContextGlobalState,
+  CreateContextEnv,
+  createContext,
+} from "./context/createContext";
 import { Logger } from "./logger";
 import { CFVersion } from "./function-deploy";
 
 const contextGlobal: ContextGlobalState = {
-  cache: {}
+  cache: {},
 };
 
 export type GetCachedContextOptions = {
@@ -14,9 +18,11 @@ export type GetCachedContextOptions = {
   logger: Logger;
   timeout: number | undefined;
   memoryLimit: number | undefined;
-}
+};
 
-export async function getCachedContext(options: GetCachedContextOptions) {
+export async function getCachedContext(
+  options: GetCachedContextOptions
+): ReturnType<typeof createContext> {
   const uri = options.appId + "/" + options.version;
 
   // Check if the isolate have been disposed
@@ -39,18 +45,18 @@ export async function getCachedContext(options: GetCachedContextOptions) {
   } else {
     const env: CreateContextEnv = {
       version: options.version.functionVersion,
-      functionTimeout: 5, // options.timeout || 15,
-      initializeTimeout: 5, // options.timeout || 15,
+      functionTimeout: options.timeout || 15,
+      initializeTimeout: options.timeout || 15,
       memoryLimit: options.memoryLimit || 128,
       backendEndpoint: options.backendEndpoint,
       appId: options.appId,
       masterKey: options.masterKey,
-      logger: options.logger
-    }
+      logger: options.logger,
+    };
 
     const createContextPromise = createContext(contextGlobal, env);
     contextGlobal.cache[uri] = createContextPromise;
-    
+
     return createContextPromise;
   }
 }
