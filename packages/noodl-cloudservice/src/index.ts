@@ -1,6 +1,6 @@
 import { createNoodlParseServer } from "./parse";
 import { executeFunction } from "./function";
-import { deployFunctions, getLatestVersion } from "./function-deploy";
+import { CFVersion, deployFunctions, getLatestVersion } from "./function-deploy";
 import { Logger } from "./logger";
 
 function createMiddleware(noodlServer) {
@@ -15,10 +15,10 @@ function createMiddleware(noodlServer) {
     
         console.log('Running cloud function ' + functionId);
     
-        let version = req.headers['x-noodl-cloud-version']
-        if (version === undefined) {
-          version = await getLatestVersion(noodlServer.options)
-        }
+        let requestVersion = req.headers['x-noodl-cloud-version'];
+        let version: CFVersion = requestVersion
+          ? { functionVersion: requestVersion }
+          : await getLatestVersion(noodlServer.options)
 
         // Execute the request
         const cfResponse = await executeFunction({

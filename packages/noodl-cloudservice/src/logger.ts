@@ -7,7 +7,7 @@ export class Logger {
     this.noodlServer = noodlServer;
   }
 
-  log(level, message) {
+  public log(level: string, message: string) {
     setImmediate(() => {
       this.noodlServer.logger._log(level, message);
     });

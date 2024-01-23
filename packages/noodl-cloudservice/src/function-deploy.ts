@@ -1,59 +1,58 @@
 import fetch from 'node-fetch';
+import { Utils } from './utils';
+
+export type GetLatestVersionOptions = {
+  appId: string;
+  masterKey: string;
+  port: number;
+}
+
+export type CFVersion = {
+  functionVersion: string;
+}
 
 // Get the latest version of cloud functions deploy, if not provided in header
-async function rawGetLatestVersion({ appId, masterKey, port }) {
+async function fetchLatestVersion({ appId, masterKey, port }: GetLatestVersionOptions): Promise<CFVersion | undefined> {
   const res = await fetch('http://localhost:' + port + '/classes/Ndl_CF?limit=1&order=-createdAt&keys=version', {
     headers: {
       'X-Parse-Application-Id': appId,
       'X-Parse-Master-Key': masterKey
     }
-  })
+  });
 
-  if (res.ok) {
-    const json = await res.json();
-
-    if (json.results && json.results.length === 1)
-      return json.results[0].version;
+  if (!res.ok) {
+    return undefined;
   }
+
+  const json = await res.json();
+  if (json.results && json.results.length === 1) {
+    return {
+      functionVersion: json.results[0].version,
+    };
+  }
+
+  return undefined;
 }
 
-let _latestVersionCache;
-export async function getLatestVersion(options) {
+type CFVersionCache = CFVersion & { ttl: number; }
+let _latestVersionCache: CFVersionCache | undefined = undefined;
+
+export async function getLatestVersion(options: GetLatestVersionOptions): Promise<CFVersion> {
   if (_latestVersionCache && (_latestVersionCache.ttl === undefined || _latestVersionCache.ttl > Date.now())) {
     return _latestVersionCache;
   }
 
-  try {
-    const latestVersion = await rawGetLatestVersion(options);
-    _latestVersionCache = latestVersion;
-    _latestVersionCache.ttl = Date.now() + 15 * 1000; // Cache for 15s
-  } catch {
-    _latestVersionCache = undefined;
-  }
-}
+  _latestVersionCache = undefined;
 
-function _randomString(size) {
-  if (size === 0) {
-    throw new Error("Zero-length randomString is useless.");
-  }
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "0123456789";
-  let objectId = "";
-  for (let i = 0; i < size; ++i) {
-    objectId += chars[Math.floor((1 + Math.random()) * 0x10000) % chars.length];
-  }
-  return objectId;
-}
+  const latestVersion = await fetchLatestVersion(options);
+  if (latestVersion) {
+    _latestVersionCache = {
+      ...latestVersion,
+      ttl: Date.now() + 15 * 1000 // Cache for 15s
+    };
 
-function chunkDeploy(str, size) {
-  const numChunks = Math.ceil(str.length / size)
-  const chunks = new Array(numChunks)
-
-  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substr(o, size)
+    return _latestVersionCache;
   }
-
-  return chunks
 }
 
 export async function deployFunctions({
@@ -64,10 +63,10 @@ export async function deployFunctions({
   data
 }) {
   const deploy = "const _exportedComponents = " + data
-  const version = _randomString(16)
+  const version = Utils.randomString(16)
 
   // Split deploy into 100kb sizes
-  const chunks = chunkDeploy(deploy, 100 * 1024);
+  const chunks = Utils.chunkString(deploy, 100 * 1024);
 
   // Upload all (must be waterfall so they get the right created_at)
   const serverUrl = 'http://localhost:' + port;

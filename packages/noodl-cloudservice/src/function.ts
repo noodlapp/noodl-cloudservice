@@ -1,4 +1,6 @@
-import * as CFContext from './cfcontext';
+import { getCachedContext, scheduleContextCachePurge } from './cfcontext';
+import { CFVersion } from './function-deploy';
+import { Logger } from './logger';
 
 // The logger that is needed by the cloud functions
 // it passes the logs to the parse server logger
@@ -16,6 +18,19 @@ export class FunctionLogger {
   }
 }
 
+export type ExecuteFunctionOptions = {
+  port: number;
+  appId: string;
+  masterKey: string;
+  version: CFVersion;
+  logger: Logger;
+  headers: Record<string, unknown>
+  functionId: string;
+  body: string;
+  timeOut: number;
+  memoryLimit: number;
+}
+
 export async function executeFunction({
   port,
   appId,
@@ -27,25 +42,26 @@ export async function executeFunction({
   body,
   timeOut = 15,
   memoryLimit = 256
-}) {
+}: ExecuteFunctionOptions) {
   // Prepare the context
-  let cachedContext = await CFContext.getCachedContext({
+  let cachedContext = await getCachedContext({
     backendEndpoint: 'http://localhost:' + port,
     appId,
     masterKey,
     version,
     logger,
-    timeOut: timeOut * 1000,
+    timeout: timeOut * 1000,
     memoryLimit,
   })
-  CFContext.scheduleContextCachePurge();
+
+  scheduleContextCachePurge();
 
   // Execute the request
   const response = await cachedContext.handleRequest({
     functionId,
     headers,
     body: JSON.stringify(body),
-  })
+  });
 
   return response
 }
