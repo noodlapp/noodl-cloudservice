@@ -219,17 +219,7 @@ export async function createContext(global: ContextGlobalState, env: CreateConte
     );
   }
 
-  const _defaultRuntime = process.env.NOODL_DEFAULT_CLOUD_RUNTIME;
-  let runtime = cloudRuntime || _defaultRuntime;
-  if (!runtime.endsWith(".js")) runtime = runtime + ".js";
-
-  console.log("- Using runtime: " + runtime);
-  const snapshot = await getRuntimeSnapshot(
-    (process.env.NOODL_CLOUD_RUNTIMES_LOCATION ||
-      "https://runtimes.noodl.cloud") +
-      "/" +
-      runtime
-  );
+  const snapshot = await getRuntimeSnapshot(cloudRuntime);
 
   console.log("- Starting up isolate");
   const isolate = new ivm.Isolate({ memoryLimit: env.memoryLimit, snapshot });
