@@ -1,5 +1,7 @@
 import fetch from "node-fetch";
 import ivm from "isolated-vm";
+import path from "path";
+import fs from "fs";
 
 // Create a snapshot of a given runtime if needed
 // of serve from the cache
@@ -21,20 +23,39 @@ async function fetchRuntime(url: string) {
   return createSnapshot(script)
 }
 
-export async function getRuntimeSnapshot(url: string) {
-  if (snapshots[url]) {
-    try {
-      await snapshots[url];
-    } catch (e) {
-      console.log(`Disposing runtime snapshot due to error in create: `, e);
-      delete snapshots[url];
+export async function getRuntimeSnapshot(functionRuntimeVersion: string) {
+  const cloudRuntimeUrl = process.env.NOODL_CLOUD_RUNTIMES_LOCATION;
+  if (cloudRuntimeUrl) {
+    const url = cloudRuntimeUrl.replace("{runtime}", functionRuntimeVersion);
+    if (snapshots[url]) {
+      try {
+        await snapshots[url];
+      } catch (e) {
+        console.log(`Disposing runtime snapshot due to error in create: `, e);
+        delete snapshots[url];
+      }
     }
-  }
+  
+    if (!snapshots[url]) {
+      snapshots[url] = fetchRuntime(url);
+    }
 
-  if (snapshots[url]) {
+    console.log("- Using runtime: " + url);
     return snapshots[url];
-  } else {
-    return snapshots[url] = fetchRuntime(url);
   }
-}
 
+  // Create a snapshot with the builtin cloud runtime
+  if (!snapshots['__builtin']) {
+    const filePath = path.join(__dirname, '../static/cloud-runtime.js');
+    if (!fs.existsSync(filePath)) {
+      throw new Error("Failed to find builtin cloud runtime: " + filePath);
+    }
+
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    snapshots['__builtin'] = Promise.resolve(createSnapshot(fileContent));
+    
+    console.log("- Using runtime: builtin");
+  }
+  
+  return snapshots['__builtin'];
+}

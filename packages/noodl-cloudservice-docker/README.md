@@ -58,3 +58,16 @@ This package contains the docker image of the Noodl Self Hosted Cloud Service.
 **Description**: The **`MAX_UPLOAD_SIZE`** variable specifies the maximum allowed size for file uploads in the application.
 
 **Default Value: `20mb`**
+
+### `NOODL_CLOUD_RUNTIMES_LOCATION`
+
+**Description**: The **`NOODL_CLOUD_RUNTIMES_LOCATION`** variable specifies the URL location where to find the runtime to use.
+
+To use the Noodl hosted cloud runtimes, use this URL:
+`https://runtimes.noodl.cloud/{runtime}.js`
+
+`{runtime}` will be replaced with the desired runtime by the Cloud Functions.
+
+If this variable is not provided then the built in cloud runtime will be used.
+
+**Default Value: `undefined`**

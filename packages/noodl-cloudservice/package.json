@@ -1,6 +1,6 @@
 {
   "name": "@noodl/cloudservice",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Low-code for when experience matter",
   "author": "Noodl <info@noodl.net>",
   "homepage": "https://noodl.net",
@@ -18,6 +18,7 @@
     "build": "npm run build:clean && npm run build:ts && npm run build:static"
   },
   "dependencies": {
+    "@noodl/cloud-runtime": "^0.6.3",
     "isolated-vm": "^4.4.2",
     "node-fetch": "2.6.7",
     "parse-server": "^4.10.4",
